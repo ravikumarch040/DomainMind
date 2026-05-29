@@ -67,6 +67,16 @@ cd apps/web && npm install && npm run dev
 cd marketing-site && npm install && npm run dev
 ```
 
+**GitHub Pages (marketing site):** after pushing to `main`, the [Deploy marketing site](.github/workflows/marketing-pages.yml) workflow publishes `marketing-site/` to **https://ravikumarch040.github.io/DomainMind/**.
+
+One-time repo setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+Local production preview (with Pages base path):
+
+```bash
+cd marketing-site && VITE_BASE_PATH=/DomainMind/ npm run build && npm run preview
+```
+
 ## Repository layout
 
 | Path | Purpose |
