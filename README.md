@@ -60,6 +60,9 @@ cd gateway && dotnet run --project src/DomainMind.Gateway
 
 # React UI
 cd apps/web && npm install && npm run dev
+
+# Marketing site
+cd marketing-site && npm install && npm run dev
 ```
 
 ## Repository layout
@@ -69,7 +72,8 @@ cd apps/web && npm install && npm run dev
 | `pipelines/` | Data prep, QLoRA training, merge (Python/uv) |
 | `services/` | Retrieval, inference config, eval (FastAPI) |
 | `gateway/` | API gateway (.NET 8) |
-| `apps/web/` | React + TypeScript UI |
+| `apps/web/` | React + TypeScript product UI |
+| `marketing-site/` | Customer-facing marketing website (Vite + React) |
 | `infra/aws/` | Terraform (VPC, EKS, SageMaker, RDS, etc.) |
 | `infra/k8s/` | Kubernetes manifests + ADOT |
 | `shared/openapi/` | Spec-first REST contracts |
