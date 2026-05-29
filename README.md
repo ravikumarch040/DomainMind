@@ -1,6 +1,8 @@
 # DomainMind
 
-Production-ready, multi-tenant, HIPAA/SOC 2-aligned domain-specific LLM platform on AWS.
+**DomainMind** is a production-ready, multi-tenant LLM platform on AWS for **compliance and legal** workloads (SOC 2, HIPAA, HITECH). It adapts **Mistral 7B Instruct** with **QLoRA** on SageMaker, serves merged weights through **vLLM** behind a **.NET 8** OpenAI-compatible gateway, augments answers with **hybrid RAG** (BGE embeddings + Qdrant + cross-encoder rerank), and scores quality with an automated **eval harness** (RAGAS, ROUGE-L, BERTScore) across base, fine-tuned, RAG-only, and combined modes.
+
+Built for regulated environments: PHI scrubbing before training, per-tenant isolation, customer-managed KMS, and HIPAA/SOC 2–aligned AWS controls.
 
 ## Architecture
 
