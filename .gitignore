@@ -49,6 +49,7 @@ data/processed/
 .idea/
 .vscode/
 *.swp
+.wiki-deploy/
 
 # OS
 .DS_Store

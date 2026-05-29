@@ -87,7 +87,8 @@ cd marketing-site && npm install && npm run dev
 
 ## Documentation
 
-- [Wiki (index)](docs/index.md)
+- [Wiki (GitHub)](https://github.com/ravikumarch040/DomainMind/wiki) — published from `docs/` ([sync script](scripts/sync-wiki.sh))
+- [Wiki (local index)](docs/index.md)
 - [Architecture](docs/architecture.md)
 - [QLoRA Pipeline LLD](docs/DomainMind_QLoRA_Pipeline.md)
 - [M0 Day-1 checklist](docs/runbooks/m0-day1-checklist.md)
