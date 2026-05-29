@@ -1,0 +1,41 @@
+stages:
+  prepare_raw:
+    cmd: echo "Place raw documents in data/raw/"
+    outs:
+      - data/raw/.gitkeep
+
+  clean_and_chunk:
+    cmd: uv run domainmind-data --input data/raw --output data/interim/chunks.jsonl --skip-synthetic
+    deps:
+      - domainmind/data/
+      - data/raw/
+    outs:
+      - data/interim/chunks.jsonl
+      - data/interim/quality_report.json
+
+  label:
+    cmd: uv run domainmind-data --input data/raw --output data/dataset.jsonl
+    deps:
+      - domainmind/data/
+      - data/raw/
+    outs:
+      - data/dataset.jsonl
+      - data/quality_report.json
+
+  split:
+    cmd: uv run domainmind-train split --input data/dataset.jsonl --output-dir data/splits
+    deps:
+      - data/dataset.jsonl
+    outs:
+      - data/splits/train.jsonl
+      - data/splits/val.jsonl
+      - data/splits/test.jsonl
+
+  train:
+    cmd: uv run domainmind-train train --train data/splits/train.jsonl --eval data/splits/val.jsonl
+    deps:
+      - data/splits/train.jsonl
+      - data/splits/val.jsonl
+      - domainmind/training/
+    outs:
+      - outputs/

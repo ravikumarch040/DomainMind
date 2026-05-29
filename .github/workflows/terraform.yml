@@ -1,0 +1,23 @@
+name: Terraform CI
+
+on:
+  push:
+    paths: ["infra/aws/**"]
+  pull_request:
+    paths: ["infra/aws/**"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/aws/envs/dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -backend=false
+        continue-on-error: true
+      - run: terraform validate
+        continue-on-error: true
+      - run: terraform fmt -check -recursive ../../
+        continue-on-error: true

@@ -1,0 +1,69 @@
+openapi: 3.1.0
+info:
+  title: DomainMind Retrieval Service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8001
+paths:
+  /retrieve:
+    post:
+      operationId: retrieve
+      summary: Hybrid search with reranking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetrieveRequest'
+      responses:
+        '200':
+          description: Ranked chunks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveResponse'
+  /index:
+    post:
+      operationId: indexDocuments
+      summary: Incremental document indexing
+      responses:
+        '202':
+          description: Indexing job accepted
+  /health:
+    get:
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    RetrieveRequest:
+      type: object
+      required: [query, tenant_id]
+      properties:
+        query:
+          type: string
+        tenant_id:
+          type: string
+        top_k:
+          type: integer
+          default: 5
+    RetrieveResponse:
+      type: object
+      properties:
+        chunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chunk'
+    Chunk:
+      type: object
+      properties:
+        chunk_id:
+          type: string
+        text:
+          type: string
+        score:
+          type: number
+        source:
+          type: string
+        doc_name:
+          type: string

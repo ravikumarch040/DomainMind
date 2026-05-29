@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: DomainMind Eval Service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8002
+paths:
+  /eval/run:
+    post:
+      operationId: runEval
+      summary: Run 4-system comparison eval
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                run_id:
+                  type: string
+                systems:
+                  type: array
+                  items:
+                    type: string
+                    enum: [base, fine_tuned, rag, combined]
+      responses:
+        '202':
+          description: Eval job started
+  /eval/runs/{run_id}:
+    get:
+      operationId: getEvalRun
+      parameters:
+        - name: run_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Eval results
+  /health:
+    get:
+      responses:
+        '200':
+          description: OK

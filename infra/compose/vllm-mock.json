@@ -1,0 +1,13 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/v1/chat/completions"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": { "Content-Type": ["application/json"] },
+      "body": "{\"id\":\"chatcmpl-mock\",\"object\":\"chat.completion\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"SOC 2 Type II requires documented controls operating effectively over a period. [SOURCE: soc2-guide, chunk-1]\"},\"finish_reason\":\"stop\"}]}"
+    }
+  }
+]

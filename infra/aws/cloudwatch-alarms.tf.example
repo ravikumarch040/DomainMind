@@ -1,0 +1,16 @@
+# Copy into env module after deploy — M12
+resource "aws_cloudwatch_metric_alarm" "gateway_p95_latency" {
+  alarm_name          = "domainmind-gateway-p95-latency"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "TargetResponseTime"
+  namespace           = "AWS/ApplicationELB"
+  period              = 300
+  statistic           = "p95"
+  threshold           = 4
+  alarm_actions       = [aws_sns_topic.alerts.arn]
+}
+
+resource "aws_sns_topic" "alerts" {
+  name = "domainmind-alerts"
+}

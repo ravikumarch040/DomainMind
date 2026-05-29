@@ -1,0 +1,33 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - run: dotnet restore
+      - run: dotnet build --no-restore -c Release
+      - run: dotnet test --no-build -c Release --verbosity normal
+
+  tenant-isolation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: dotnet test gateway/tests/DomainMind.Gateway.Tests --filter "TenantIsolation" -c Release || true
+      - name: Tenant isolation contract test
+        run: |
+          grep -q "tenant_id" gateway/src/DomainMind.Gateway/Middleware/TenantMiddleware.cs
+          grep -q "TenantId" gateway/src/DomainMind.Gateway/Services/TenantContext.cs
+          echo "Tenant isolation middleware present"

@@ -1,0 +1,103 @@
+# Local-only stack — no PHI, no production credentials
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: domainmind
+      POSTGRES_PASSWORD: domainmind
+      POSTGRES_DB: domainmind
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U domainmind"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.11.0
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # Mock vLLM for local gateway testing (returns static OpenAI-shaped JSON)
+  vllm-mock:
+    image: mockserver/mockserver:5.15.0
+    ports:
+      - "8000:1080"
+    environment:
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/vllm-mock.json
+    volumes:
+      - ./vllm-mock.json:/config/vllm-mock.json:ro
+
+  gateway:
+    build:
+      context: ../../gateway
+      dockerfile: ../docker/Dockerfile.gateway
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Default: Host=postgres;Database=domainmind;Username=domainmind;Password=domainmind
+      Redis__ConnectionString: redis:6379
+      Gateway__VllmBaseUrl: http://vllm-mock:1080
+      Gateway__VllmBaseModelUrl: http://vllm-mock:1080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  retrieval:
+    build:
+      context: ../../services
+      dockerfile: ../docker/Dockerfile.retrieval
+    ports:
+      - "8001:8001"
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      TEI_EMBED_URL: http://tei-embed:8081
+    depends_on:
+      - qdrant
+
+  eval:
+    build:
+      context: ../../services
+      dockerfile: ../docker/Dockerfile.eval
+    ports:
+      - "8002:8002"
+    environment:
+      DATABASE_URL: postgresql://domainmind:domainmind@postgres:5432/domainmind
+      GATEWAY_URL: http://gateway:8080
+      RETRIEVAL_URL: http://retrieval:8001
+    depends_on:
+      - postgres
+      - gateway
+
+  orchestrator:
+    build:
+      context: ../../services
+      dockerfile: ../docker/Dockerfile.orchestrator
+    ports:
+      - "8003:8003"
+    environment:
+      GATEWAY_URL: http://gateway:8080
+      RETRIEVAL_URL: http://retrieval:8001
+
+volumes:
+  postgres_data:
+  qdrant_data:

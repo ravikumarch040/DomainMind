@@ -1,0 +1,365 @@
+
+<h2 class="sr-only">DomainMind 14-week build plan — click each week to see daily tasks, deliverables, and technical decisions</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1rem 0;font-size:14px;color:var(--color-text-primary)}
+.phases{display:flex;gap:0;margin-bottom:1.5rem;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.phase-tab{flex:1;padding:10px 6px;text-align:center;cursor:pointer;font-size:11px;font-weight:500;border-right:0.5px solid var(--color-border-tertiary);transition:background .15s;background:var(--color-background-primary);color:var(--color-text-secondary)}
+.phase-tab:last-child{border-right:none}
+.phase-tab.active{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.phase-tab .ph-label{display:block;font-size:10px;color:var(--color-text-tertiary);margin-top:2px;font-weight:400}
+.weeks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(0,1fr));gap:8px;margin-bottom:1.25rem}
+.wk{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;cursor:pointer;transition:border-color .15s;background:var(--color-background-primary)}
+.wk:hover{border-color:var(--color-border-secondary)}
+.wk.active{border-color:var(--color-border-primary);background:var(--color-background-secondary)}
+.wk-num{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px}
+.wk-title{font-size:12px;font-weight:500;color:var(--color-text-primary);line-height:1.4}
+.detail-panel{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+.detail-head{padding:1rem 1.25rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.detail-head-left{}
+.detail-wk-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px}
+.detail-wk-title{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.detail-wk-goal{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.phase-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md);white-space:nowrap;flex-shrink:0}
+.detail-body{padding:1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.section-lbl{font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px}
+.task-list{display:flex;flex-direction:column;gap:6px}
+.task{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.task-dot{width:5px;height:5px;border-radius:50%;background:var(--color-border-primary);margin-top:6px;flex-shrink:0}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11px;padding:3px 8px;border-radius:20px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.chip-ai{font-size:11px;padding:3px 8px;border-radius:20px;border:0.5px solid var(--color-border-info);color:var(--color-text-info);background:var(--color-background-info)}
+.deliverable{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:12px;color:var(--color-text-secondary);margin-top:4px;line-height:1.5}
+.deliverable strong{color:var(--color-text-primary);font-weight:500}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:12px 1.25rem;border-top:0.5px solid var(--color-border-tertiary)}
+.nav-btn{font-size:12px;padding:5px 12px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary)}
+.nav-btn:hover{background:var(--color-background-secondary)}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.wk-counter{font-size:12px;color:var(--color-text-tertiary)}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 1.25rem;border-top:0.5px solid var(--color-border-tertiary)}
+button.ask{font-size:12px;padding:5px 12px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary)}
+button.ask:hover{background:var(--color-background-secondary)}
+@media(max-width:500px){.detail-body{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <div class="phases" id="phases"></div>
+  <div class="weeks-grid" id="weeks-grid"></div>
+  <div class="detail-panel">
+    <div class="detail-head">
+      <div class="detail-head-left">
+        <div class="detail-wk-label" id="d-label"></div>
+        <div class="detail-wk-title" id="d-title"></div>
+        <div class="detail-wk-goal" id="d-goal"></div>
+      </div>
+      <span class="phase-badge" id="d-badge"></span>
+    </div>
+    <div class="detail-body">
+      <div>
+        <div class="section-lbl">Daily tasks</div>
+        <div class="task-list" id="d-tasks"></div>
+      </div>
+      <div>
+        <div class="section-lbl" style="margin-bottom:8px">Tech & tools</div>
+        <div class="chips" id="d-chips" style="margin-bottom:14px"></div>
+        <div class="section-lbl">Week deliverable</div>
+        <div class="deliverable" id="d-deliverable"></div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">← Previous week</button>
+      <span class="wk-counter" id="wk-counter"></span>
+      <button class="nav-btn" id="btn-next" onclick="navigate(1)">Next week →</button>
+    </div>
+    <div class="action-row" id="action-row"></div>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  {label:"Foundation",weeks:"1–2",color:"#534AB7",bg:"#EEEDFE",text:"#3C3489"},
+  {label:"Data pipeline",weeks:"3–4",color:"#0F6E56",bg:"#E1F5EE",text:"#085041"},
+  {label:"Fine-tuning",weeks:"5–7",color:"#854F0B",bg:"#FAEEDA",text:"#633806"},
+  {label:"RAG layer",weeks:"8–9",color:"#185FA5",bg:"#E6F1FB",text:"#0C447C"},
+  {label:"Eval harness",weeks:"10–11",color:"#993C1D",bg:"#FAECE7",text:"#712B13"},
+  {label:"Platform UI",weeks:"12–13",color:"#3B6D11",bg:"#EAF3DE",text:"#27500A"},
+  {label:"Deploy & polish",weeks:"14",color:"#5F5E5A",bg:"#F1EFE8",text:"#444441"},
+];
+
+const WEEKS = [
+  {
+    title:"Environment & architecture design",
+    goal:"Set up all development infrastructure and design the full system architecture before writing a single line of ML code.",
+    phase:0,
+    tasks:[
+      "Set up Python monorepo (uv / poetry), .NET solution, React app in a single GitHub repo with PR templates",
+      "Provision Azure ML workspace, GPU compute cluster (NC6s_v3 or use free tier with smaller model), Blob Storage, Container Registry",
+      "Design the full system architecture — draw component diagram: API gateway → fine-tune service → RAG service → eval service → UI",
+      "Define all REST API contracts between services using OpenAPI spec (spec-first approach)",
+      "Configure CI/CD: GitHub Actions pipelines for Python, .NET, and React with lint + test gates",
+      "Set up Weights & Biases project for experiment tracking — create initial run structure"
+    ],
+    chips:["Python + uv","Azure ML","GitHub Actions","W&B","OpenAPI spec",".NET 8","Docker Compose"],
+    aiChips:[],
+    deliverable:"<strong>Runnable local dev environment</strong> with Docker Compose, W&B project live, architecture doc committed to repo, all API contracts drafted in OpenAPI YAML."
+  },
+  {
+    title:"Data ingestion & corpus preparation",
+    goal:"Build the pipeline that takes raw domain documents and produces clean, structured training data — the most underrated step in any fine-tuning project.",
+    phase:0,
+    tasks:[
+      "Build document loaders: PDF (PyMuPDF), DOCX (python-docx), HTML scraper, plain text — with metadata extraction (source, date, section)",
+      "Implement text cleaning pipeline: boilerplate removal, deduplication (MinHash LSH), language detection, quality filters",
+      "Design and implement chunking strategy: recursive character splitter with overlap, respecting sentence boundaries",
+      "Build instruction-tuning dataset formatter: convert raw text into (system, instruction, response) triples using GPT-4o as a labeler",
+      "Set up data versioning with DVC — every dataset version reproducible",
+      "Write data quality dashboard: token count distribution, duplicate rate, domain coverage stats"
+    ],
+    chips:["PyMuPDF","python-docx","MinHash LSH","DVC","pandas","GPT-4o (labeler)"],
+    aiChips:["GPT-4o for synthetic data labeling"],
+    deliverable:"<strong>Cleaned, versioned training dataset</strong> in JSONL format with (system, instruction, response) structure, DVC-tracked, data quality report generated."
+  },
+  {
+    title:"Tokenization, baseline & dataset splits",
+    goal:"Understand the base model deeply before touching it — establish a baseline you can beat, and prepare train/val/test splits correctly.",
+    phase:1,
+    tasks:[
+      "Download Mistral 7B Instruct v0.3 (or Llama 3 8B Instruct) weights via HuggingFace Hub, inspect tokenizer behavior on domain text",
+      "Run base model inference on 50 domain questions — log all responses to W&B as the zero-shot baseline",
+      "Create train (80%) / validation (10%) / test (10%) splits — stratify by document source to avoid leakage",
+      "Tokenize dataset and measure sequence length distribution — tune max_seq_length to cover 95th percentile without waste",
+      "Implement data collator with dynamic padding + packing (sequence packing for efficiency)",
+      "Write a fast inference wrapper class used consistently across all experiments"
+    ],
+    chips:["HuggingFace Hub","transformers","tokenizers","W&B","NumPy"],
+    aiChips:["Mistral 7B Instruct","Llama 3 8B Instruct"],
+    deliverable:"<strong>Baseline evaluation logged to W&B</strong>, train/val/test splits committed in DVC, tokenization analysis report, reusable inference wrapper class."
+  },
+  {
+    title:"QLoRA fine-tuning — first training run",
+    goal:"Run your first real QLoRA fine-tuning job. Don't optimize yet — just get a working training loop and learn what the loss curves tell you.",
+    phase:2,
+    tasks:[
+      "Configure QLoRA: load model in 4-bit NF4 quantization (bitsandbytes), attach LoRA adapters (rank=16, alpha=32, target: q_proj, v_proj, k_proj, o_proj)",
+      "Set up SFTTrainer (TRL library) with gradient checkpointing, Flash Attention 2, and W&B callback",
+      "Launch first training run — watch training loss, grad norm, GPU memory usage in real time",
+      "Save LoRA adapter weights separately from base model (merge later) — implement checkpoint saving every N steps",
+      "Run validation loss evaluation at end of each epoch — plot train vs val curves to catch overfitting early",
+      "Log 20 sample completions from val set to W&B at each checkpoint for qualitative review"
+    ],
+    chips:["bitsandbytes","PEFT","TRL / SFTTrainer","Flash Attention 2","W&B callbacks","CUDA"],
+    aiChips:["QLoRA (4-bit NF4)","LoRA adapters","Mistral 7B"],
+    deliverable:"<strong>First fine-tuned LoRA adapter checkpoint</strong> saved and versioned, W&B run with full training curves, sample completions logged for visual inspection."
+  },
+  {
+    title:"Hyperparameter tuning & training optimization",
+    goal:"Systematically improve the fine-tuned model quality through controlled experiments — this is where real ML engineering skill shows.",
+    phase:2,
+    tasks:[
+      "Run 3-5 W&B sweep experiments varying: learning rate (1e-4 to 5e-5), LoRA rank (8, 16, 32), warmup steps, batch size",
+      "Experiment with LoRA target modules — add gate_proj, up_proj, down_proj for MLP layers and measure impact",
+      "Implement early stopping based on validation loss plateau — avoid manual babysitting of long runs",
+      "Try DPO (Direct Preference Optimization) on a small preference dataset as a bonus alignment step",
+      "Merge best LoRA adapter into base model using PEFT merge_and_unload() — verify merged model output matches adapter output",
+      "Quantize merged model to GGUF (llama.cpp) for lightweight CPU inference option"
+    ],
+    chips:["W&B Sweeps","PEFT merge_and_unload","llama.cpp","GGUF","DPO (TRL)"],
+    aiChips:["LoRA rank experiments","DPO alignment","GGUF quantization"],
+    deliverable:"<strong>Best fine-tuned model checkpoint selected</strong> via W&B sweep results, merged model saved, GGUF variant for CPU inference, hyperparameter comparison table."
+  },
+  {
+    title:"vLLM serving & .NET API gateway",
+    goal:"Take the fine-tuned model from a notebook to a real production-grade API endpoint — this is the engineering layer most ML projects skip.",
+    phase:2,
+    tasks:[
+      "Deploy merged model via vLLM — OpenAI-compatible REST API endpoint (/v1/chat/completions format)",
+      "Configure vLLM: continuous batching, tensor parallelism, KV cache size tuning for throughput",
+      "Build .NET 8 API gateway: routes requests to fine-tuned model or base OpenAI API based on request header flag",
+      "Implement request logging middleware in .NET — every prompt + response stored to PostgreSQL for later eval replay",
+      "Add auth middleware (JWT Bearer) + rate limiting to the gateway",
+      "Write integration tests: hit the vLLM endpoint via the .NET gateway, assert response schema and latency < 3s"
+    ],
+    chips:["vLLM","OpenAI-compat API",".NET 8","JWT auth","PostgreSQL","xUnit"],
+    aiChips:["vLLM continuous batching","tensor parallelism"],
+    deliverable:"<strong>Live vLLM endpoint</strong> behind .NET gateway with auth, rate limiting, full request logging, and passing integration test suite."
+  },
+  {
+    title:"RAG pipeline — ingestion & vector store",
+    goal:"Build the RAG layer that works alongside the fine-tuned model — not instead of it. The combination is more powerful than either alone.",
+    phase:3,
+    tasks:[
+      "Set up Qdrant vector database (Docker locally, Qdrant Cloud for production) — create domain-specific collection with HNSW index",
+      "Implement embedding pipeline: chunk documents → embed with text-embedding-3-large → upsert to Qdrant with metadata payload",
+      "Build incremental re-indexing: detect new/modified documents via file hash, only re-embed changed chunks",
+      "Implement hybrid search: dense vector search (cosine similarity) + sparse BM25 keyword search via Qdrant's built-in sparse vectors",
+      "Add cross-encoder re-ranking step (sentence-transformers cross-encoder/ms-marco-MiniLM-L-6-v2) to re-rank top-20 → top-5",
+      "Expose retrieval as a FastAPI service with /retrieve endpoint — returns ranked chunks with scores and source metadata"
+    ],
+    chips:["Qdrant","HNSW index","FastAPI","sentence-transformers","BM25 sparse"],
+    aiChips:["text-embedding-3-large","cross-encoder re-ranking","hybrid dense+sparse search"],
+    deliverable:"<strong>Qdrant collection populated</strong> with embeddings, hybrid search + re-ranking pipeline live, /retrieve API tested with precision@5 measured on 20 manual queries."
+  },
+  {
+    title:"RAG + fine-tune integration & context injection",
+    goal:"Wire the RAG retrieval layer into the fine-tuned model's prompt — and build the source citation mechanism that makes answers trustworthy.",
+    phase:3,
+    tasks:[
+      "Build prompt assembly layer: retrieved chunks injected into system prompt with source metadata tags [SOURCE: doc_name, chunk_id]",
+      "Implement context window management: if retrieved chunks exceed token budget, rank-trim to fit — never silently truncate mid-chunk",
+      "Build citation extraction: parse LLM response for [SOURCE:...] references, resolve to original document URL/page",
+      "Add query routing logic: simple factual queries → fine-tuned model only; complex/open-ended → RAG + fine-tuned model",
+      "Implement streaming response via SSE (Server-Sent Events) from FastAPI — token-by-token streaming to the UI",
+      "Write end-to-end test: send domain query → retrieval → prompt assembly → vLLM inference → parsed cited response"
+    ],
+    chips:["FastAPI SSE","prompt templating","citation parser","query router","Python"],
+    aiChips:["RAG-augmented generation","source citation extraction","query routing"],
+    deliverable:"<strong>End-to-end cited answer flow</strong> working: query → hybrid retrieval → context injection → fine-tuned model → streamed cited response with source links."
+  },
+  {
+    title:"Automated evaluation — RAGAS, ROUGE, BERTScore",
+    goal:"Build the eval harness that makes your project scientifically credible — and lets you prove in an interview that your model actually improved things.",
+    phase:4,
+    tasks:[
+      "Build golden test set: 50 domain Q&A pairs manually written and verified — the ground truth your evals compare against",
+      "Implement RAGAS metrics: faithfulness (does answer match retrieved context?), answer relevancy, context precision, context recall",
+      "Add ROUGE-L and BERTScore for lexical + semantic overlap with reference answers",
+      "Build comparison runner: evaluate same 50 questions against 4 systems — base LLM, fine-tuned only, RAG only, fine-tuned + RAG",
+      "Store all eval results in PostgreSQL with run_id, model_version, metric_name, score — queryable history",
+      "Auto-trigger eval run on every model checkpoint via GitHub Actions — fail CI if faithfulness drops below threshold"
+    ],
+    chips:["RAGAS","ROUGE","BERTScore","pytest","GitHub Actions","PostgreSQL"],
+    aiChips:["RAGAS faithfulness","answer relevancy metric","context recall scoring"],
+    deliverable:"<strong>Eval harness running automatically in CI</strong>, comparison table of all 4 systems across 5 metrics, results stored in DB, eval dashboard queryable via API."
+  },
+  {
+    title:"Eval dashboard & experiment comparison UI",
+    goal:"Turn raw eval numbers into a visual comparison UI — this becomes your most impressive demo artifact in interviews.",
+    phase:4,
+    tasks:[
+      "Build React eval dashboard: table view of all eval runs, sortable by metric, filterable by model version and date",
+      "Add side-by-side answer comparison: for any test question, see base LLM vs fine-tuned vs RAG vs combined responses",
+      "Implement score trend charts (Recharts): faithfulness, relevancy, ROUGE over time per model version",
+      "Add 'run new eval' button in UI — triggers backend job, polls for completion, updates table live via polling",
+      "Annotator view: allow manual thumbs up/down on any answer — stored as preference data for potential future DPO run",
+      "Export eval report as PDF — auto-generated with model card, metric table, and sample answers (using a Python PDF generator)"
+    ],
+    chips:["React","Recharts","TypeScript","FastAPI polling","PDF report generation"],
+    aiChips:[],
+    deliverable:"<strong>Live eval dashboard</strong> with comparison table, trend charts, side-by-side answer viewer, manual annotation, and PDF report export."
+  },
+  {
+    title:"Platform UI — chat interface & knowledge management",
+    goal:"Build the user-facing product that wraps all the AI infrastructure — making it accessible to non-engineers and demonstrable in any interview.",
+    phase:5,
+    tasks:[
+      "Build React chat interface: streaming message display (SSE), source citation chips below each answer, copy-to-clipboard",
+      "Add document upload UI: drag-and-drop PDF/DOCX upload → triggers embedding pipeline → shows indexing progress bar",
+      "Implement collection management: list all indexed documents, see chunk count, last indexed timestamp, delete document",
+      "Add model selector dropdown: switch between base model, fine-tuned model, RAG-only, combined — responses update live",
+      "Build session history: past conversations stored in PostgreSQL, loadable from sidebar",
+      "Add system prompt editor: let admin customize the base system prompt injected into every request"
+    ],
+    chips:["React + TypeScript","Tailwind CSS","SSE streaming","React Query","React Dropzone"],
+    aiChips:[],
+    deliverable:"<strong>Polished chat UI</strong> with streaming, citations, document upload, collection management, model selector, and conversation history."
+  },
+  {
+    title:"Admin panel, multi-tenancy & access control",
+    goal:"Add the enterprise-readiness features that separate a toy project from a platform — tenant isolation is what makes this hireable at senior level.",
+    phase:5,
+    tasks:[
+      "Implement multi-tenant data isolation: each tenant has its own Qdrant collection, PostgreSQL schema, and JWT claim",
+      "Build admin panel: user management (invite, role assign, deactivate), tenant usage stats, API key management",
+      "Add RBAC: Admin (full access), Editor (upload docs, run evals), Viewer (chat only) — enforced in .NET gateway middleware",
+      "Implement API key auth alongside JWT — so enterprises can call the API programmatically",
+      "Add rate limiting per tenant (sliding window in Redis) and usage metering (tokens consumed, queries run)",
+      "Write tenant isolation integration test: verify tenant A cannot retrieve tenant B's documents"
+    ],
+    chips:[".NET middleware","Redis (rate limit)","PostgreSQL multi-schema","JWT + RBAC","API keys"],
+    aiChips:[],
+    deliverable:"<strong>Multi-tenant platform</strong> with RBAC, admin panel, API key auth, Redis rate limiting, and passing tenant isolation security tests."
+  },
+  {
+    title:"Containerization, Azure deployment & observability",
+    goal:"Deploy everything to Azure as a production-grade system — with real monitoring, not just console logs.",
+    phase:6,
+    tasks:[
+      "Write Dockerfiles for all services (FastAPI RAG, FastAPI eval, .NET gateway, React) — multi-stage builds for minimal image size",
+      "Write Kubernetes manifests: Deployments, Services, HPA (horizontal pod autoscaler), ConfigMaps, Secrets",
+      "Deploy to Azure Kubernetes Service (AKS) — set up ingress controller with HTTPS (cert-manager + Let's Encrypt)",
+      "Configure Azure Application Insights: distributed tracing across .NET and Python services, custom metrics (latency, token count, cache hit rate)",
+      "Set up Azure Monitor alerts: p95 latency > 4s, error rate > 1%, GPU memory > 90% — alerts to email/Teams",
+      "Write load test (Locust): simulate 50 concurrent users, measure p50/p95/p99 latency, confirm autoscaling triggers correctly",
+      "Record a 5-minute demo video of the full platform — use it as your portfolio artifact"
+    ],
+    chips:["Docker multi-stage","AKS","cert-manager","Azure App Insights","Locust","Helm"],
+    aiChips:[],
+    deliverable:"<strong>Production deployment on AKS</strong> with HTTPS, distributed tracing, alerting, passing load test, and a polished demo video for your portfolio."
+  },
+];
+
+const PHASE_WEEK_MAP = [0,0,1,1,2,2,2,3,3,4,4,5,5,6];
+
+let current = 0;
+
+function phaseForWeek(i){ return PHASE_WEEK_MAP[i]; }
+
+function renderPhases(){
+  const el = document.getElementById('phases');
+  el.innerHTML = PHASES.map((p,i)=>`
+    <div class="phase-tab ${phaseActive(i)?'active':''}" onclick="jumpPhase(${i})" style="${phaseActive(i)?'border-top:2px solid '+p.color:''}">
+      ${p.label}<span class="ph-label">Wk ${p.weeks}</span>
+    </div>`).join('');
+}
+
+function phaseActive(i){ return phaseForWeek(current)===i; }
+
+function renderWeeksGrid(){
+  const activePhase = phaseForWeek(current);
+  const el = document.getElementById('weeks-grid');
+  const cols = WEEKS.filter((_,i)=>phaseForWeek(i)===activePhase).length;
+  el.style.gridTemplateColumns = `repeat(${cols}, minmax(0,1fr))`;
+  el.innerHTML = WEEKS.map((w,i)=>{
+    if(phaseForWeek(i)!==activePhase) return '';
+    const ph = PHASES[phaseForWeek(i)];
+    return `<div class="wk ${i===current?'active':''}" onclick="select(${i})" style="${i===current?'border-color:'+ph.color:''}">
+      <div class="wk-num" style="${i===current?'color:'+ph.color:''}">Week ${i+1}</div>
+      <div class="wk-title">${w.title}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+}
+
+function renderDetail(){
+  const w = WEEKS[current];
+  const ph = PHASES[phaseForWeek(current)];
+  document.getElementById('d-label').textContent = `Week ${current+1} of 14`;
+  document.getElementById('d-title').textContent = w.title;
+  document.getElementById('d-goal').textContent = w.goal;
+  const badge = document.getElementById('d-badge');
+  badge.textContent = ph.label + ' phase';
+  badge.style.background = ph.bg;
+  badge.style.color = ph.text;
+  document.getElementById('d-tasks').innerHTML = w.tasks.map(t=>`<div class="task"><div class="task-dot"></div><div>${t}</div></div>`).join('');
+  document.getElementById('d-chips').innerHTML =
+    w.aiChips.map(c=>`<span class="chip-ai">${c}</span>`).join('') +
+    w.chips.map(c=>`<span class="chip">${c}</span>`).join('');
+  document.getElementById('d-deliverable').innerHTML = w.deliverable;
+  document.getElementById('btn-prev').disabled = current===0;
+  document.getElementById('btn-next').disabled = current===WEEKS.length-1;
+  document.getElementById('wk-counter').textContent = `${current+1} / ${WEEKS.length}`;
+  document.getElementById('action-row').innerHTML = `
+    <button class="ask" onclick="sendPrompt('Deep dive on DomainMind Week ${current+1}: ${w.title} — give me detailed code examples, specific implementation decisions, and common pitfalls to avoid')">Deep dive this week ↗</button>
+    <button class="ask" onclick="sendPrompt('What are the hardest technical challenges in DomainMind Week ${current+1} (${w.title}) and how do I solve them?')">Key challenges ↗</button>
+    <button class="ask" onclick="sendPrompt('Write the GitHub commit checklist for DomainMind Week ${current+1}: ${w.title} — what should be committed and how should I describe the PRs?')">Commit checklist ↗</button>
+  `;
+}
+
+function select(i){ current=i; renderPhases(); renderWeeksGrid(); renderDetail(); }
+function navigate(d){ if(current+d>=0&&current+d<WEEKS.length){ current+=d; renderPhases(); renderWeeksGrid(); renderDetail(); }}
+function jumpPhase(p){
+  const firstWeek = PHASE_WEEK_MAP.indexOf(p);
+  if(firstWeek>=0) select(firstWeek);
+}
+
+renderPhases(); renderWeeksGrid(); renderDetail();
+</script>

@@ -1,0 +1,9 @@
+{
+  "questions": [
+    {"instruction": "What are the key requirements for SOC 2 Type II certification?"},
+    {"instruction": "Explain the difference between HIPAA and HITECH."},
+    {"instruction": "What technical safeguards does HIPAA require?"},
+    {"instruction": "How long is a typical SOC 2 Type II evaluation period?"},
+    {"instruction": "What must organizations do under the HIPAA Breach Notification Rule?"}
+  ]
+}

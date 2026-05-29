@@ -1,0 +1,19 @@
+# vLLM deployment configuration for EKS
+model: /models/domainmind-merged
+served_model_name: domainmind
+host: 0.0.0.0
+port: 8000
+
+# Performance
+tensor_parallel_size: 1
+max_model_len: 4096
+gpu_memory_utilization: 0.90
+enable_prefix_caching: true
+
+# OpenAI-compatible API
+api_key: optional-set-via-secrets-manager
+
+# Health
+health_check:
+  path: /health
+  interval_seconds: 30

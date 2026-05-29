@@ -1,0 +1,95 @@
+openapi: 3.1.0
+info:
+  title: DomainMind API Gateway
+  version: 1.0.0
+  description: OpenAI-compatible gateway with multi-tenant auth and model routing
+servers:
+  - url: http://localhost:8080
+    description: Local development
+paths:
+  /v1/chat/completions:
+    post:
+      operationId: createChatCompletion
+      summary: Create chat completion
+      security:
+        - bearerAuth: []
+        - apiKeyAuth: []
+      parameters:
+        - name: X-Model-Mode
+          in: header
+          schema:
+            type: string
+            enum: [base, fine_tuned, rag, combined]
+            default: combined
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatCompletionRequest'
+      responses:
+        '200':
+          description: Completion response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatCompletionResponse'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limit exceeded
+  /health:
+    get:
+      operationId: healthCheck
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    ChatCompletionRequest:
+      type: object
+      required: [messages]
+      properties:
+        model:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        stream:
+          type: boolean
+          default: false
+        max_tokens:
+          type: integer
+    Message:
+      type: object
+      required: [role, content]
+      properties:
+        role:
+          type: string
+          enum: [system, user, assistant]
+        content:
+          type: string
+    ChatCompletionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                $ref: '#/components/schemas/Message'
+              finish_reason:
+                type: string

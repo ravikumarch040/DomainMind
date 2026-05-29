@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adot-config
+  namespace: domainmind
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+    exporters:
+      awsxray:
+        region: us-east-1
+      awsemf:
+        region: us-east-1
+        namespace: DomainMind
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [awsxray]
+        metrics:
+          receivers: [otlp]
+          exporters: [awsemf]
